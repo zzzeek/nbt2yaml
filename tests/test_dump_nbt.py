@@ -10,7 +10,8 @@ class DumpNBTTest(unittest.TestCase):
         parsed = parse_nbt(datafile(fname))
         out = StringIO.StringIO()
         dump_nbt(parsed, out)
-        eq_(unzipped_data, out.getvalue())
+        out = gzip.GzipFile(fileobj=StringIO.StringIO(out.getvalue())).read()
+        eq_(unzipped_data, out)
 
     def test_basic(self):
         self._assert_data("test.nbt")

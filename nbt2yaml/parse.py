@@ -1,6 +1,7 @@
 import struct
 import gzip
 from collections import namedtuple
+import re
 
 class Tag(object):
     _tags = {}
@@ -36,7 +37,7 @@ class Tag(object):
         raise NotImplementedError()
 
     def __repr__(self):
-        return "TAG_%s" % self.name
+        return "TAG_%s" % re.sub(r'^(\w)|_(\w)', lambda m:m.group(0).upper(), self.name)
 
 class FixedTag(Tag):
     def __init__(self, name, id, size, format):
@@ -124,6 +125,7 @@ def _dump_length(length_type, length, stream):
     stream.write(
         struct.pack(">" + length_type.format, length)
     )
+
 def parse_nbt(stream, gzipped=True):
     if gzipped:
         stream = gzip.GzipFile(fileobj=stream)
@@ -131,5 +133,7 @@ def parse_nbt(stream, gzipped=True):
     return type_.parse(stream)
 
 def dump_nbt(nbt, stream, gzipped=True):
+    if gzipped:
+        stream = gzip.GzipFile(mode='w', fileobj=stream)
     type_ = nbt[0]
     type_.dump(nbt, stream)
