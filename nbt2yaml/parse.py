@@ -8,18 +8,31 @@ class Tag(object):
 
     def __init__(self, name, id):
         self.name = name
+        self.id = id
         Tag._tags[id] = self
 
     @classmethod
     def from_stream(cls, stream):
         return cls._tags[struct.unpack('>b', stream.read(1))[0]]
 
+    def to_stream(self, stream):
+        stream.write(struct.pack('>b', self.id))
+
     def parse(self, stream):
         name = TAG_String._parse_impl(stream)
         data = self._parse_impl(stream)
         return Tag._tuple(self, name, data)
 
-    def _parse_impl(self):
+    def dump(self, element, stream):
+        type_, name, data = element
+        type_.to_stream(stream)
+        TAG_String._dump_impl(name, stream)
+        self._dump_impl(data, stream)
+
+    def _parse_impl(self, stream):
+        raise NotImplementedError()
+
+    def _dump_impl(self, data, stream):
         raise NotImplementedError()
 
     def __repr__(self):
@@ -33,6 +46,11 @@ class FixedTag(Tag):
 
     def _parse_impl(self, stream):
         return struct.unpack(">" + self.format, stream.read(self.size))[0]
+
+    def _dump_impl(self, data, stream):
+        stream.write(
+            struct.pack(">" + self.format, data)
+        )
 
 class EndTag(Tag):
     ""
@@ -50,14 +68,27 @@ class VariableTag(Tag):
             data = data.decode(self.encoding)
         return data
 
+    def _dump_impl(self, data, stream):
+        if self.encoding:
+            data = data.encode(self.encoding)
+        _dump_length(self.length_tag, len(data), stream)
+        stream.write(data)
+
 class ListTag(Tag):
     def _parse_impl(self, stream):
         element_type = Tag.from_stream(stream)
         length = _data_length(TAG_Int, stream)
 
-        return [
+        return (element_type, [
             element_type._parse_impl(stream) for i in xrange(length)
-        ]
+        ])
+
+    def _dump_impl(self, data, stream):
+        element_type, data = data
+        element_type.to_stream(stream)
+        _dump_length(TAG_Int, len(data), stream)
+        for elem in data:
+            element_type._dump_impl(elem, stream)
 
 class CompoundTag(Tag):
     def _parse_impl(self, stream):
@@ -68,6 +99,11 @@ class CompoundTag(Tag):
                 break
             data.append(c_type_.parse(stream))
         return data
+
+    def _dump_impl(self, data, stream):
+        for elem in data:
+            elem[0].dump(elem, stream)
+        TAG_End.to_stream(stream)
 
 TAG_End = EndTag('end', 0)
 TAG_Byte = FixedTag('byte', 1, 1, 'b')
@@ -84,9 +120,16 @@ TAG_Compound = CompoundTag('compound', 10)
 def _data_length(length_type, stream):
     return struct.unpack(">" + length_type.format, stream.read(length_type.size))[0]
 
+def _dump_length(length_type, length, stream):
+    stream.write(
+        struct.pack(">" + length_type.format, length)
+    )
 def parse_nbt(stream, gzipped=True):
     if gzipped:
         stream = gzip.GzipFile(fileobj=stream)
     type_ = Tag.from_stream(stream)
     return type_.parse(stream)
 
+def dump_nbt(nbt, stream, gzipped=True):
+    type_ = nbt[0]
+    type_.dump(nbt, stream)
