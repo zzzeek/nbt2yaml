@@ -7,7 +7,7 @@ import StringIO
 import os
 
 def nbtedit():
-    parser = argparse.ArgumentParser(description="Edit an nbt file in-place in Yaml format.")
+    parser = argparse.ArgumentParser(description="Edit an nbt file in-place in yaml format.")
     parser.add_argument("filename", type=str, help="filename")
     parser.add_argument("-n", "--no-gzip", 
                         action="store_true", 
