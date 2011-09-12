@@ -234,11 +234,13 @@ Disclaimer
 ==========
 
 nbtedit is **brand new**.   If it's September, 2011, you are one of the **first** people reading this
-README.   If there is a bug in nbtedit, you're about to be the person who finds it !
+README.   If there is a bug in nbtedit, you're about to be the person who finds it!   It's also
+very possible that an incorrectly edited YAML file could save an NBT file that Minecraft no longer
+knows how to read.
 
 **Back EVERYTHING up before tinkering with your files !!**  nbtedit saves a backup of each file it edits, but 
-**don't rely solely on that!**.  Please note you are **using this editor at your own risk**.   The code is
-unit tested, works great, but I'd hate to be the reason you screwed up your world so **make copies first**.
-Thanks !
+**don't rely solely on that!**  Please note you are **using this editor at your own risk**.   The code is
+unit tested, works great, but I'd hate to be the reason you screwed up your world so **make copies of all 
+files being edited first**.  Thanks!
 
 
