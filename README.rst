@@ -2,9 +2,6 @@
 nbt2yaml
 ========
 
-Synopsis
-========
-
 nbt2yaml presents a command line interface for reading and editing Minecraft NBT files using a
 custom YAML format.   It also includes a Python API for parsing and writing NBT files to/from
 a simple Python data structure.
@@ -22,9 +19,13 @@ YAML: http://www.yaml.org/
 Installation
 ============
 
-Install via ``pip`` or ``easy_install`` is easiest::
+Install via ``pip`` is easiest::
 
-    pip install http://bitbucket.org/zzzeek/nbt2yaml
+    pip install https://bitbucket.org/zzzeek/nbt2yaml/get/default.tar.gz
+
+or alternatively ``easy_install``::
+
+    easy_install https://bitbucket.org/zzzeek/nbt2yaml/get/default.tar.gz
 
 Once installed, the ``nbtedit``, ``nbt2yaml``, and ``yaml2nbt`` commands
 should be available, from the same place other Python utilities are installed.
