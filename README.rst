@@ -19,6 +19,8 @@ YAML: http://www.yaml.org/
 Installation
 ============
 
+First, **be sure to read** the disclaimer_ down below.
+
 Install via ``pip`` is easiest::
 
     pip install https://bitbucket.org/zzzeek/nbt2yaml/get/default.tar.gz
@@ -226,6 +228,8 @@ improving this format are welcome !
         $N\x1E\\@.&(4J\x060"
     - doubleTest: !double "0.4931287132182315"
 
+.. _disclaimer:
+
 Disclaimer
 ==========
 
@@ -235,5 +239,6 @@ README.   If there is a bug in nbtedit, you're about to be the person who finds 
 **Back EVERYTHING up before tinkering with your files !!**  nbtedit saves a backup of each file it edits, but 
 **don't rely solely on that!**.  Please note you are **using this editor at your own risk**.   The code is
 unit tested, works great, but I'd hate to be the reason you screwed up your world so **make copies first**.
+Thanks !
 
 
