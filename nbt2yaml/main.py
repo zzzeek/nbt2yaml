@@ -1,6 +1,6 @@
 import argparse
 import sys
-from nbt2yaml import parse_nbt, to_yaml
+from nbt2yaml import parse_nbt, dump_yaml, parse_yaml, dump_nbt
 import tempfile
 import shutil
 import StringIO
@@ -24,11 +24,21 @@ def nbtedit():
     except KeyError:
         sys.exit("Environment variable EDITOR is not set")
 
-    edit_file = tempfile.NamedTemporaryFile(delete=False)
-    edit_file.write(to_yaml(struct))
+    edit_file = tempfile.NamedTemporaryFile(delete=False, suffix='.yml')
+    edit_file.write(dump_yaml(struct))
     edit_file.close()
     edit_filename = edit_file.name
     os.system("%s %s" % (editor, edit_filename))
+
+
+    edit_file = open(edit_filename, 'rb')
+    new_struct = parse_yaml(edit_file)
+    edit_file.close()
+    os.remove(edit_filename)
+
+    if new_struct == struct:
+        sys.stderr.write("No changes made\n")
+        sys.exit()
 
     save_counter = 0
     while True:
@@ -40,30 +50,41 @@ def nbtedit():
             break
         save_counter += 1
 
-    shutil.copy(options.filename, savefile)
-    #shutil.move(output, options.filename)
-    os.remove(edit_filename)
+    shutil.move(options.filename, savefile)
+    sys.stderr.write("Saving old file as %s\n" % savefile)
+    write_file = open(options.filename, 'wb')
+    sys.stderr.write("Writing %s\n" % options.filename)
+    dump_nbt(new_struct, write_file, gzipped=not options.no_gzip)
+    write_file.close()
 
 def nbt2yaml():
     parser = argparse.ArgumentParser(description="Dump an nbt file or stream to yaml.")
-    parser.add_argument("-f", "--file", type=str, help="Filename.  If omitted, file is read from stdin.")
+    parser.add_argument("filename", type=str, help="Filename.  Specify as '-' to read from stdin.")
     parser.add_argument("-n", "--no-gzip", 
                         action="store_true", 
                         help="Don't use gzip"
                         )
     options = parser.parse_args()
-    if options.file:
-        input_ = open(options.file, 'rb')
-    else:
+    if options.filename == '-':
         input_ = StringIO.StringIO(sys.stdin.read())
+    else:
+        input_ = open(options.filename, 'rb')
+
     struct = parse_nbt(input_, gzipped=not options.no_gzip)
-    print to_yaml(struct)
+    print dump_yaml(struct)
 
 def yaml2nbt():
     parser = argparse.ArgumentParser(description="Dump a yaml file or stream to nbt.")
-    parser.add_argument("-f", "--file", type=str, help="Filename.  If omitted, file is read from stdin.")
+    parser.add_argument("filename", type=str, help="Filename.  Specify as '-' to read from stdin.")
     parser.add_argument("-n", "--no-gzip", 
                         action="store_true", 
                         help="Don't use gzip"
                         )
-    raise NotImplementedError()
+    options = parser.parse_args()
+    if options.filename == '-':
+        input_ = StringIO.StringIO(sys.stdin.read())
+    else:
+        input_ = open(options.filename, 'rb')
+
+    struct = parse_yaml(input_)
+    dump_nbt(struct, sys.stdout)

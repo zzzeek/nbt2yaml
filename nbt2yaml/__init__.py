@@ -1,2 +1,2 @@
 from parse import parse_nbt, dump_nbt
-from yamlgen import to_yaml
+from yamlgen import parse_yaml, dump_yaml

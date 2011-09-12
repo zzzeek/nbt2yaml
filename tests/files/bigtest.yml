@@ -1,19 +1,4 @@
-import unittest
-from nbt2yaml import parse_nbt, dump_yaml
-from tests import datafile, eq_
-
-class ToYamlTest(unittest.TestCase):
-    def test_basic(self):
-        data = parse_nbt(datafile("test.nbt"))
-        eq_(dump_yaml(data),
-"""hello world:
-- name: Bananrama
-""")
-
-    def test_large(self):
-        data = parse_nbt(datafile("bigtest.nbt"))
-        eq_(dump_yaml(data),
-r"""Level:
+Level:
 - longTest: !long "9223372036854775807L"
 - shortTest: !short "32767"
 - stringTest: !!python/str "HELLO WORLD THIS IS A TEST STRING \xC5\xC4\xD6!"
@@ -64,4 +49,3 @@ r"""Level:
     `XZ\x02\x188b2\fTB:<H^\x1AD\x14R6$\x1C\x1E*@`&Z4\x18\x06b\0\f\"B\b<\x16^LDFR\x04\
     $N\x1E\\@.&(4J\x060"
 - doubleTest: !double "0.4931287132182315"
-""")
