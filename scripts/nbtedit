@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+
+from nbt2yaml.main import nbtedit
+
+if __name__ == "__main__":
+    nbtedit()

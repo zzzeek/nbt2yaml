@@ -29,6 +29,11 @@ setup(name='nbt2yaml',
       packages=find_packages(exclude=['ez_setup', 'tests']),
       zip_safe=False,
       install_requires=['PyYAML'],
+      scripts=[
+                'scripts/nbtedit',
+                'scripts/nbt2yaml',
+                'scripts/yaml2nbt'
+                ],
       test_suite='nose.collector',
       tests_require=['nose'],
       **extra
