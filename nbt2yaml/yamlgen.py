@@ -2,6 +2,7 @@ import yaml
 from nbt2yaml import parse
 
 _explicit_types = parse.TAG_Short, parse.TAG_Long, parse.TAG_Double, parse.TAG_Byte, parse.TAG_Byte_Array
+_all_types = parse.Tag._tags.values()
 
 _canned_types = {
     str:parse.TAG_String,
@@ -30,6 +31,9 @@ class ForceType(object):
         self.type = type_
         self.value = value
 
+class ForceListOfType(ForceType):
+    pass
+
 def _type_representer(dumper, struct):
     if struct.type is parse.TAG_Byte_Array:
         representation = struct.value
@@ -37,7 +41,11 @@ def _type_representer(dumper, struct):
         representation = repr(struct.value)
     return dumper.represent_scalar(u'!%s' % struct.type.name, representation, style='""')
 
+def _collection_representer(dumper, struct):
+    return dumper.represent_sequence(u'!list_%s' % struct.type.name, struct.value)
+
 yaml.add_representer(ForceType, _type_representer)
+yaml.add_representer(ForceListOfType, _collection_representer)
 
 def _type_constructor(type_):
     def _constructor(loader, node):
@@ -45,8 +53,17 @@ def _type_constructor(type_):
         return ForceType(type_, value)
     return _constructor
 
+def _list_constructor(type_):
+    def _constructor(loader, node):
+        value = loader.construct_sequence(node)
+        return ForceListOfType(type_, value)
+    return _constructor
+
 for type_ in _explicit_types:
     yaml.add_constructor(u'!%s' % type_.name, _type_constructor(type_))
+
+for type_ in _all_types:
+    yaml.add_constructor(u'!list_%s' % type_.name, _list_constructor(type_))
 
 def _yaml_serialize(struct):
     tag, name, data = struct.type, struct.name, struct.data
@@ -67,7 +84,7 @@ def _value_as_yaml(type_, value):
         return ForceType(type_, value)
     elif type_ is parse.TAG_List:
         element_type, data = value
-        return [_value_as_yaml(element_type, d) for d in data]
+        return ForceListOfType(element_type, [_value_as_yaml(element_type, d) for d in data])
     else:
         return value
 
@@ -82,17 +99,17 @@ def _yaml_as_value(type_, value):
         else:
             return value.value
     elif type_ is parse.TAG_List:
-        ltype = _type_from_yaml(value[0])
-        return (ltype, [_yaml_as_value(ltype, s) for s in value])
+        ltype = value.type
+        return (ltype, [_yaml_as_value(ltype, s) for s in value.value])
     else:
         return value
 
 def _type_from_yaml(data):
-    if isinstance(data, list):
-        if isinstance(data[0], dict):
-            return parse.TAG_Compound
-        else:
-            return parse.TAG_List
+    if isinstance(data, ForceListOfType):
+        return parse.TAG_List
+    elif isinstance(data, list):
+        assert data and isinstance(data[0], dict)
+        return parse.TAG_Compound
     elif isinstance(data, ForceType):
         return data.type
     elif type(data) in _canned_types:

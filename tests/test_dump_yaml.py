@@ -10,6 +10,22 @@ class ToYamlTest(unittest.TestCase):
 - name: Bananrama
 """)
 
+    def test_lists(self):
+        data = parse_nbt(datafile("list.nbt"))
+        eq_(dump_yaml(data),
+"""? ''
+: - Data:
+    - thundering: !byte "0"
+    - LastPlayed: !long "1315921966180L"
+    - Player:
+      - Motion: !list_double
+        - !double "9.166176096485612e-17"
+        - !double "-0.0784000015258789"
+        - !double "-2.063101401779548e-16"
+      - Health: !short "20"
+      - Inventory: !list_byte []
+""")
+
     def test_large(self):
         data = parse_nbt(datafile("bigtest.nbt"))
         eq_(dump_yaml(data),
@@ -26,13 +42,13 @@ r"""Level:
   - egg:
     - name: Eggbert
     - value: 0.5
-- listTest (long):
+- listTest (long): !list_long
   - !long "11"
   - !long "12"
   - !long "13"
   - !long "14"
   - !long "15"
-- listTest (compound):
+- listTest (compound): !list_compound
   - - name: 'Compound tag #0'
     - created-on: !long "1264099775885L"
   - - name: 'Compound tag #1'

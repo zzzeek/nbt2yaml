@@ -11,13 +11,13 @@ Level:
   - egg:
     - name: Eggbert
     - value: 0.5
-- listTest (long):
+- listTest (long): !list_long
   - !long "11"
   - !long "12"
   - !long "13"
   - !long "14"
   - !long "15"
-- listTest (compound):
+- listTest (compound): !list_compound
   - - name: 'Compound tag #0'
     - created-on: !long "1264099775885L"
   - - name: 'Compound tag #1'

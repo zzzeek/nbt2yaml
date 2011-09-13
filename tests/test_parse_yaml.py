@@ -12,3 +12,8 @@ class FromYamlTest(unittest.TestCase):
         data = parse_yaml(datafile("bigtest.yml"))
 
         eq_(data, parse_nbt(datafile("bigtest.nbt")))
+
+    def test_lists(self):
+        data = parse_yaml(datafile("list.yml"))
+
+        eq_(data, parse_nbt(datafile("list.nbt")))
