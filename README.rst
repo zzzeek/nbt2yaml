@@ -23,11 +23,20 @@ First, **be sure to read** the disclaimer_ down below.
 
 Install via ``pip`` is easiest::
 
-    pip install https://bitbucket.org/zzzeek/nbt2yaml/get/default.tar.gz
+    pip install nbt2yaml
 
 or alternatively ``easy_install``::
 
+    easy_install nbt2yaml
+
+You can get at the latest source like this::
+
+    pip install https://bitbucket.org/zzzeek/nbt2yaml/get/default.tar.gz
+
+or::
+
     easy_install https://bitbucket.org/zzzeek/nbt2yaml/get/default.tar.gz
+
 
 Once installed, the ``nbtedit``, ``nbt2yaml``, and ``yaml2nbt`` commands
 should be available, from the same place other Python utilities are installed.
