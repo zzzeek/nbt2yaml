@@ -9,15 +9,15 @@ import os
 def nbtedit():
     parser = argparse.ArgumentParser(description="Edit an nbt file in-place in yaml format.")
     parser.add_argument("filename", type=str, help="filename")
-    parser.add_argument("-n", "--no-gzip", 
-                        action="store_true", 
+    parser.add_argument("-n", "--no-gzip",
+                        action="store_true",
                         help="Don't use gzip"
                         )
 
     options = parser.parse_args()
 
     struct = parse_nbt(
-                    open(options.filename, 'rb'), 
+                    open(options.filename, 'rb'),
                     gzipped=not options.no_gzip)
     try:
         editor = os.environ['EDITOR']
@@ -60,8 +60,8 @@ def nbtedit():
 def nbt2yaml():
     parser = argparse.ArgumentParser(description="Dump an nbt file or stream to yaml.")
     parser.add_argument("filename", type=str, help="Filename.  Specify as '-' to read from stdin.")
-    parser.add_argument("-n", "--no-gzip", 
-                        action="store_true", 
+    parser.add_argument("-n", "--no-gzip",
+                        action="store_true",
                         help="Don't use gzip"
                         )
     options = parser.parse_args()
@@ -76,8 +76,8 @@ def nbt2yaml():
 def yaml2nbt():
     parser = argparse.ArgumentParser(description="Dump a yaml file or stream to nbt.")
     parser.add_argument("filename", type=str, help="Filename.  Specify as '-' to read from stdin.")
-    parser.add_argument("-n", "--no-gzip", 
-                        action="store_true", 
+    parser.add_argument("-n", "--no-gzip",
+                        action="store_true",
                         help="Don't use gzip"
                         )
     options = parser.parse_args()
@@ -87,4 +87,4 @@ def yaml2nbt():
         input_ = open(options.filename, 'rb')
 
     struct = parse_yaml(input_)
-    dump_nbt(struct, sys.stdout)
+    dump_nbt(struct, sys.stdout, gzipped=not options.no_gzip)

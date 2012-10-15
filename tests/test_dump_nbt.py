@@ -18,3 +18,6 @@ class DumpNBTTest(unittest.TestCase):
 
     def test_large(self):
         self._assert_data("bigtest.nbt")
+
+    def test_spawner(self):
+        self._assert_data("spawner.nbt")

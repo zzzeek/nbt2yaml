@@ -1,0 +1,15 @@
+Schematic:
+- Blocks: !byte_array "4"
+- Width: !short "1"
+- Height: !short "1"
+- Entities: !list_byte []
+- Length: !short "1"
+- Materials: Alpha
+- TileEntities: !list_compound
+  - - Delay: !short "120"
+    - y: 0
+    - x: 0
+    - EntityId: Skeleton
+    - z: 0
+    - id: MobSpawner
+- Data: !byte_array "\0"
