@@ -117,6 +117,22 @@ class CompoundTag(Tag):
             elem[0].dump(elem, stream)
         TAG_End.to_stream(stream)
 
+class IntArrayTag(Tag):
+    def _parse_impl(self, stream):
+        element_type = TAG_Int
+        length = self._parse_length(TAG_Int, stream)
+
+        return (element_type, [
+            element_type._parse_impl(stream) for i in xrange(length)
+        ])
+
+    def _dump_impl(self, data, stream):
+        element_type, data = data
+        # element_type.to_stream(stream)
+        self._dump_length(TAG_Int, len(data), stream)
+        for elem in data:
+            element_type._dump_impl(elem, stream)
+
 TAG_End = EndTag('end', 0)
 TAG_Byte = FixedTag('byte', 1, 1, 'b')
 TAG_Short = FixedTag('short', 2, 2, 'h')
@@ -128,6 +144,7 @@ TAG_Byte_Array = VariableTag('byte_array', 7, TAG_Int)
 TAG_String = VariableTag('string', 8, TAG_Short, encoding='utf-8')
 TAG_List = ListTag('list', 9)
 TAG_Compound = CompoundTag('compound', 10)
+TAG_Int_Array = IntArrayTag('int_array', 11)
 
 def parse_nbt(stream, gzipped=True):
     """Parse an .nbt file from the given stream.
