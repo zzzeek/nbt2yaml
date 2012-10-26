@@ -122,16 +122,14 @@ class IntArrayTag(Tag):
         element_type = TAG_Int
         length = self._parse_length(TAG_Int, stream)
 
-        return (element_type, [
+        return [
             element_type._parse_impl(stream) for i in xrange(length)
-        ])
+        ]
 
     def _dump_impl(self, data, stream):
-        element_type, data = data
-        # element_type.to_stream(stream)
         self._dump_length(TAG_Int, len(data), stream)
         for elem in data:
-            element_type._dump_impl(elem, stream)
+            TAG_Int._dump_impl(elem, stream)
 
 TAG_End = EndTag('end', 0)
 TAG_Byte = FixedTag('byte', 1, 1, 'b')

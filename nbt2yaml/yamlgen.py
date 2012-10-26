@@ -34,6 +34,9 @@ class ForceType(object):
 class ForceListOfType(ForceType):
     pass
 
+class ForceIntArray(ForceType):
+    pass
+
 def _type_representer(dumper, struct):
     if struct.type is parse.TAG_Byte_Array:
         representation = struct.value
@@ -44,8 +47,12 @@ def _type_representer(dumper, struct):
 def _collection_representer(dumper, struct):
     return dumper.represent_sequence(u'!list_%s' % struct.type.name, struct.value)
 
+def _int_array_representer(dumper, struct):
+    return dumper.represent_sequence(u'!int_array', struct.value)
+
 yaml.add_representer(ForceType, _type_representer)
 yaml.add_representer(ForceListOfType, _collection_representer)
+yaml.add_representer(ForceIntArray, _int_array_representer)
 
 def _type_constructor(type_):
     def _constructor(loader, node):
@@ -59,11 +66,17 @@ def _list_constructor(type_):
         return ForceListOfType(type_, value)
     return _constructor
 
+def _int_array_constructor(loader, node):
+    value = loader.construct_sequence(node)
+    return ForceIntArray(parse.TAG_Int_Array, value)
+
 for type_ in _explicit_types:
     yaml.add_constructor(u'!%s' % type_.name, _type_constructor(type_))
 
 for type_ in _all_types:
     yaml.add_constructor(u'!list_%s' % type_.name, _list_constructor(type_))
+
+yaml.add_constructor(u'!int_array', _int_array_constructor)
 
 def _yaml_serialize(struct):
     tag, name, data = struct.type, struct.name, struct.data
@@ -85,6 +98,8 @@ def _value_as_yaml(type_, value):
     elif type_ is parse.TAG_List:
         element_type, data = value
         return ForceListOfType(element_type, [_value_as_yaml(element_type, d) for d in data])
+    elif type_ is parse.TAG_Int_Array:
+        return ForceIntArray(parse.TAG_Int, value)
     else:
         return value
 
@@ -101,12 +116,16 @@ def _yaml_as_value(type_, value):
     elif type_ is parse.TAG_List:
         ltype = value.type
         return (ltype, [_yaml_as_value(ltype, s) for s in value.value])
+    elif type_ is parse.TAG_Int_Array:
+        return value.value
     else:
         return value
 
 def _type_from_yaml(data):
     if isinstance(data, ForceListOfType):
         return parse.TAG_List
+    elif isinstance(data, ForceIntArray):
+        return parse.TAG_Int_Array
     elif isinstance(data, list):
         assert data and isinstance(data[0], dict)
         return parse.TAG_Compound
