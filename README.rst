@@ -6,13 +6,13 @@ nbt2yaml presents a command line interface for reading and editing Minecraft NBT
 custom YAML format.   It also includes a Python API for parsing and writing NBT files to/from
 a simple Python data structure.
 
-The key tool is ``nbtedit``, a command line utility that will shell out the 
+The key tool is ``nbtedit``, a command line utility that will shell out the
 YAML version of the target NBT file to your editor of choice, allowing
 relatively easy editing of NBT data.   When the editing session is closed,
 the saved file is parsed back into NBT, and if changes have occurred, the original
 file is updated; a copy of the previous version is saved as well.
 
-NBT format:  http://www.minecraft.net/docs/NBT.txt
+NBT format:  http://wiki.vg/NBT
 
 YAML: http://www.yaml.org/
 
@@ -105,7 +105,7 @@ Example Use
 Suppose we want to switch the "GameMode" from "0" (survival) to "1"
 (creative).
 
-First, ensure that Minecraft itself is **not running**.  Then, navigate to 
+First, ensure that Minecraft itself is **not running**.  Then, navigate to
 where your Minecraft save files are.  Here's how it looks on a mac::
 
     $ cd ~/Library/Application\ Support/minecraft/saves/
@@ -238,9 +238,9 @@ README.   If there is a bug in nbtedit, you're about to be the person who finds 
 very possible that an incorrectly edited YAML file could save an NBT file that Minecraft no longer
 knows how to read.
 
-**Back EVERYTHING up before tinkering with your files !!**  nbtedit saves a backup of each file it edits, but 
+**Back EVERYTHING up before tinkering with your files !!**  nbtedit saves a backup of each file it edits, but
 **don't rely solely on that!**  Please note you are **using this editor at your own risk**.   The code is
-unit tested, works great, but I'd hate to be the reason you screwed up your world so **make copies of all 
+unit tested, works great, but I'd hate to be the reason you screwed up your world so **make copies of all
 files being edited first**.  Thanks!
 
 

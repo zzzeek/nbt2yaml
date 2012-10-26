@@ -1,3 +1,8 @@
+0.2.2
+=====
+Added support for the new TAG_Int_array type, courtesy
+dratini0.
+
 0.2.1
 =====
 Fixed -n option in yaml2nbt, previously was having

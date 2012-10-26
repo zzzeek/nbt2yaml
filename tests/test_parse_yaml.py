@@ -26,6 +26,10 @@ class FromYamlTest(unittest.TestCase):
         data = parse_yaml(datafile("spawner.yml"))
         self._assert(data, "spawner.nbt")
 
+    def test_int_array(self):
+        data = parse_yaml(datafile("intarraytest.yml"))
+        self._assert(data, "intarraytest.nbt")
+
     def _assert(self, data, nbt_filename):
         eq_(data, parse_nbt(datafile(nbt_filename)))
 

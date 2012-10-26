@@ -21,3 +21,6 @@ class DumpNBTTest(unittest.TestCase):
 
     def test_spawner(self):
         self._assert_data("spawner.nbt")
+
+    def test_int_array(self):
+        self._assert_data("intarraytest.nbt")

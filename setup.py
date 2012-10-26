@@ -12,7 +12,7 @@ if sys.version_info >= (3, 0):
 readme = os.path.join(os.path.dirname(__file__), 'README.rst')
 
 setup(name='nbt2yaml',
-      version="0.2.1",
+      version="0.2.2",
       description="Read and write Minecraft NBT files using Yaml.",
       long_description=file(readme).read(),
       classifiers=[

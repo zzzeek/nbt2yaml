@@ -30,6 +30,10 @@ class ToYamlTest(unittest.TestCase):
         data = parse_nbt(datafile("spawner.nbt"))
         eq_(dump_yaml(data), datafile("spawner.yml").read())
 
+    def test_int_array(self):
+        data = parse_nbt(datafile("intarraytest.nbt"))
+        eq_(dump_yaml(data), datafile("intarraytest.yml").read())
+
     def test_large(self):
         data = parse_nbt(datafile("bigtest.nbt"))
         eq_(dump_yaml(data),
