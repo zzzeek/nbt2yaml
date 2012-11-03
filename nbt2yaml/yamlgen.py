@@ -37,9 +37,23 @@ class ForceListOfType(ForceType):
 class ForceIntArray(ForceType):
     pass
 
+def _hex_dump(binary):
+    hexa = []
+    for i in binary:
+        hexa.append("{0:02X}".format(ord(i)))
+    return ' '.join(hexa)
+
+def _hex_undump(hexa):
+    binary = ""
+    hexa = hexa.split(' ') # I did not want to import the re module
+    for i in hexa:
+        current = int(i, 16)
+        binary += chr(current)
+    return binary
+
 def _type_representer(dumper, struct):
     if struct.type is parse.TAG_Byte_Array:
-        representation = struct.value
+        representation = _hex_dump(struct.value)
     else:
         representation = repr(struct.value)
     return dumper.represent_scalar(u'!%s' % struct.type.name, representation, style='""')
@@ -70,13 +84,19 @@ def _int_array_constructor(loader, node):
     value = loader.construct_sequence(node)
     return ForceIntArray(parse.TAG_Int_Array, value)
 
+def _byte_array_constructor(loader, node):
+    value = loader.construct_scalar(node)
+    return ForceType(parse.TAG_Byte_Array, _hex_undump(value))
+
 for type_ in _explicit_types:
-    yaml.add_constructor(u'!%s' % type_.name, _type_constructor(type_))
+    if not type is parse.TAG_Byte_Array:
+        yaml.add_constructor(u'!%s' % type_.name, _type_constructor(type_))
 
 for type_ in _all_types:
     yaml.add_constructor(u'!list_%s' % type_.name, _list_constructor(type_))
 
 yaml.add_constructor(u'!int_array', _int_array_constructor)
+yaml.add_constructor(u'!byte_array', _byte_array_constructor)
 
 def _yaml_serialize(struct):
     tag, name, data = struct.type, struct.name, struct.data
