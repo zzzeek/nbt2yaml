@@ -23,3 +23,6 @@ class ToYamlTest(unittest.TestCase):
         data = parse_nbt(datafile("bigtest.nbt"))
         eq_(dump_yaml(data), datafile("bigtest.yml").read())
 
+    def test_chunk(self):
+        data = parse_nbt(datafile("chunk.nbt"))
+        eq_(dump_yaml(data), datafile("chunk.yml").read())

@@ -27,3 +27,6 @@ class DumpNBTTest(unittest.TestCase):
 
     def test_int_array(self):
         self._assert_data("intarraytest.nbt")
+
+    def test_chunk(self):
+        self._assert_data("chunk.nbt")
