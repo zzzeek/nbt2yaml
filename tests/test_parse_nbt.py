@@ -12,6 +12,24 @@ class ParseNBTTest(unittest.TestCase):
                 )
         eq_(parse_nbt(datafile("test.nbt")), assert_)
 
+    def test_lists(self):
+        assert_ = (
+            parse.TAG_Compound, u'', [
+                (parse.TAG_Compound, u'Data', [
+                        (parse.TAG_Byte, u'thundering', 0),
+                        (parse.TAG_Long, u'LastPlayed', 1315921966180),
+                        (parse.TAG_Compound, u'Player', [
+                                (parse.TAG_List, u'Motion', (parse.TAG_Double, [
+                                            9.166176096485612e-17,
+                                            -0.0784000015258789,
+                                            -2.063101401779548e-16
+                                            ])),
+                                (parse.TAG_Short, u'Health', 20),
+                                (parse.TAG_List, u'Inventory', (parse.TAG_Byte, []))
+                                ])
+                        ])
+                ])
+
     def test_large(self):
         assert_ = (
                     parse.TAG_Compound, u'Level', [
@@ -50,12 +68,34 @@ class ParseNBTTest(unittest.TestCase):
                             u'byteArrayTest (the first 1000 values of '
                                     '(n*n*255+n*7)%100, starting with n=0 '
                                     '(0, 62, 34, 16, 8, ...))',
-                                    ''.join([struct.pack('>b', (n*n*255+n*7)%100) for n in range(0, 1000)])
+                                    ''.join([struct.pack('>b', (n*n*255+n*7)%100) for n in xrange(0, 1000)])
                             ),
                         (parse.TAG_Double, u'doubleTest', 0.4931287132182315)
                     ])
         eq_(parse_nbt(datafile("bigtest.nbt")), assert_)
 
+    def test_schematic(self):
+        assert_ = (
+            parse.TAG_Compound, u'Schematic', [
+                (parse.TAG_Byte_Array, u'Blocks', '\x34'),
+                (parse.TAG_Short, u'Width', 1),
+                (parse.TAG_Short, u'Height', 1),
+                (parse.TAG_List, u'Entities', (parse.TAG_Byte, [])),
+                (parse.TAG_Short, u'Length', 1),
+                (parse.TAG_String, u'Materials', u'Alpha'),
+                (parse.TAG_List, u'TileEntities', (parse.TAG_Compound, [
+                            [
+                                (parse.TAG_Short, u'Delay', 120),
+                                (parse.TAG_Int, u'y', 0),
+                                (parse.TAG_Int, u'x', 0),
+                                (parse.TAG_String, u'EntityId', u'Skeleton'),
+                                (parse.TAG_Int, u'z', 0),
+                                (parse.TAG_String, u'id', u'MobSpawner')
+                                ]
+                            ])),
+                (parse.TAG_Byte_Array, u'Data', '\x00')
+                ])
+        
     def test_int_array(self):
         assert_ = (
                     parse.TAG_Compound, 'Test root compound',

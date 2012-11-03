@@ -1,5 +1,5 @@
 Schematic:
-- Blocks: !byte_array "4"
+- Blocks: !byte_array "34"
 - Width: !short "1"
 - Height: !short "1"
 - Entities: !list_byte []
@@ -12,4 +12,4 @@ Schematic:
     - EntityId: Skeleton
     - z: 0
     - id: MobSpawner
-- Data: !byte_array "\0"
+- Data: !byte_array "00"

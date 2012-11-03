@@ -16,6 +16,9 @@ class DumpNBTTest(unittest.TestCase):
     def test_basic(self):
         self._assert_data("test.nbt")
 
+    def test_lists(self):
+        self._assert_data("list.nbt")
+
     def test_large(self):
         self._assert_data("bigtest.nbt")
 

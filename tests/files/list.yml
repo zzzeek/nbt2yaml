@@ -1,7 +1,7 @@
 ? ''
 : - Data:
     - thundering: !byte "0"
-    - LastPlayed: !long "1315921966180L"
+    - LastPlayed: !long "1315921966180"
     - Player:
       - Motion: !list_double
         - !double "9.166176096485612e-17"
