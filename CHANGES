@@ -1,3 +1,9 @@
+0.3.0
+=====
+Modified the yaml rendering of TAG_Byte_array to render/
+parse as a hex dump.  This is a more readable/editable
+format, also courtesy dratin0.
+
 0.2.2
 =====
 Added support for the new TAG_Int_array type, courtesy
