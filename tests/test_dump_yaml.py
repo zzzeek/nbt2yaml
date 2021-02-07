@@ -1,6 +1,12 @@
 import unittest
-from nbt2yaml import parse_nbt, dump_yaml, compat
-from . import datafile, eq_, file_as_string
+
+from nbt2yaml import compat
+from nbt2yaml import dump_yaml
+from nbt2yaml import parse_nbt
+from . import datafile
+from . import eq_
+from . import file_as_string
+
 
 class ToYamlTest(unittest.TestCase):
     def test_basic(self):

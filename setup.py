@@ -1,6 +1,7 @@
-from setuptools import setup
 import os
 import re
+
+from setuptools import setup
 
 v = open(os.path.join(os.path.dirname(__file__), "nbt2yaml", "__init__.py"))
 VERSION = (

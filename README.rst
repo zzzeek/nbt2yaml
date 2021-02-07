@@ -2,14 +2,14 @@
 nbt2yaml
 ========
 
-nbt2yaml presents a command line interface for reading and editing Minecraft NBT files using a
-custom YAML format.   It also includes a Python API for parsing and writing NBT files to/from
-a simple Python data structure.
+nbt2yaml presents a command line interface for reading and editing Minecraft
+NBT files using a custom YAML format. It also includes a Python API for parsing
+and writing NBT files to/from a simple Python data structure.
 
 The key tool is ``nbtedit``, a command line utility that will shell out the
 YAML version of the target NBT file to your editor of choice, allowing
-relatively easy editing of NBT data.   When the editing session is closed,
-the saved file is parsed back into NBT, and if changes have occurred, the original
+relatively easy editing of NBT data. When the editing session is closed, the
+saved file is parsed back into NBT, and if changes have occurred, the original
 file is updated; a copy of the previous version is saved as well.
 
 NBT format:  http://wiki.vg/NBT
@@ -21,26 +21,22 @@ Installation
 
 First, **be sure to read** the disclaimer_ down below.
 
-Install via ``pip`` is easiest::
+Install via ``pip``::
 
     pip install nbt2yaml
 
-or alternatively ``easy_install``::
-
-    easy_install nbt2yaml
-
-Once installed, the ``nbtedit``, ``nbt2yaml``, and ``yaml2nbt`` commands
-should be available, from the same place other Python utilities are installed.
+Once installed, the ``nbtedit``, ``nbt2yaml``, and ``yaml2nbt`` commands should
+be available, from the same place other Python utilities are installed.
 
 Commands
 ========
 
-Note that an nbt file is typically in gzip format.  nbt2yaml commands
-will assume gzip format for all nbt files written and read, unless the ``--no-gzip``
+Note that an nbt file is typically in gzip format. nbt2yaml commands will
+assume gzip format for all nbt files written and read, unless the ``--no-gzip``
 flag is specified.
 
-For the ``nbt2yaml`` and ``yaml2nbt`` commands, the filename can be specified as ``-``,
-which indicates the data should be read from standard input.
+For the ``nbt2yaml`` and ``yaml2nbt`` commands, the filename can be specified
+as ``-``, which indicates the data should be read from standard input.
 
 nbtedit
 --------

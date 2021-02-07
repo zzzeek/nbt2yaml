@@ -1,8 +1,13 @@
 import unittest
-from nbt2yaml import parse_nbt, dump_yaml, parse_yaml, dump_nbt, compat
-from . import datafile, eq_
 
+from nbt2yaml import compat
+from nbt2yaml import dump_nbt
+from nbt2yaml import parse_nbt
+from nbt2yaml import parse_yaml
 from nbt2yaml.compat import BytesIO
+from . import datafile
+from . import eq_
+
 
 class FromYamlTest(unittest.TestCase):
     def test_basic(self):
@@ -20,12 +25,10 @@ class FromYamlTest(unittest.TestCase):
             data = parse_yaml(file_)
         self._assert(data, "bigtest.nbt")
 
-
     def test_lists(self):
         with datafile("list.yml") as file_:
             data = parse_yaml(file_)
         self._assert(data, "list.nbt")
-
 
     def test_spawner(self):
         with datafile("spawner.yml") as file_:

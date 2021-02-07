@@ -1,8 +1,12 @@
-import unittest
-from nbt2yaml import parse_nbt, dump_nbt
-from . import datafile, eq_
 import gzip
+import unittest
+
+from nbt2yaml import dump_nbt
+from nbt2yaml import parse_nbt
 from nbt2yaml.compat import BytesIO
+from . import datafile
+from . import eq_
+
 
 class DumpNBTTest(unittest.TestCase):
     def _assert_data(self, fname):
