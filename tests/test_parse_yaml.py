@@ -1,4 +1,4 @@
-import unittest
+import pytest
 
 from nbt2yaml import compat
 from nbt2yaml import dump_nbt
@@ -9,58 +9,34 @@ from . import datafile
 from . import eq_
 
 
-class FromYamlTest(unittest.TestCase):
-    def test_basic(self):
-        with datafile("test.yml") as file_:
-            data = parse_yaml(file_)
+@pytest.mark.parametrize(
+    "name",
+    [
+        ("test",),
+        ("list",),
+        ("bigtest",),
+        ("spawner",),
+        ("intarraytest",),
+        ("longarraytest",),
+        ("chunk",),
+        ("empty_compound",),
+    ],
+)
+def test_from_yaml(name):
+    nbt_name = "%s.nbt" % name
+    yml_name = "%s.yml" % name
 
-        self._assert(data, "test.nbt")
+    if not compat.py3k and yml_name == "bigtest.yml":
+        yml_name = "bigtest.py2k.yml"
 
-    def test_large(self):
-        if not compat.py3k:
-            filename = "bigtest.py2k.yml"
-        else:
-            filename = "bigtest.yml"
-        with datafile(filename) as file_:
-            data = parse_yaml(file_)
-        self._assert(data, "bigtest.nbt")
+    with datafile(yml_name) as file_:
+        data = parse_yaml(file_)
 
-    def test_lists(self):
-        with datafile("list.yml") as file_:
-            data = parse_yaml(file_)
-        self._assert(data, "list.nbt")
+    with datafile(nbt_name) as file_:
+        eq_(data, parse_nbt(file_))
 
-    def test_spawner(self):
-        with datafile("spawner.yml") as file_:
-            data = parse_yaml(file_)
-        self._assert(data, "spawner.nbt")
+    out = BytesIO()
+    dump_nbt(data, out, gzipped=False)
 
-    def test_int_array(self):
-        with datafile("intarraytest.yml") as file_:
-            data = parse_yaml(file_)
-        self._assert(data, "intarraytest.nbt")
-
-    def test_long_array(self):
-        with datafile("longarraytest.yml") as file_:
-            data = parse_yaml(file_)
-        self._assert(data, "longarraytest.nbt")
-
-    def test_chunk(self):
-        with datafile("chunk.yml") as file_:
-            data = parse_yaml(file_)
-        self._assert(data, "chunk.nbt")
-
-    def test_empty_compound(self):
-        with datafile("empty_compound.yml") as file_:
-            data = parse_yaml(file_)
-        self._assert(data, "empty_compound.nbt")
-
-    def _assert(self, data, nbt_filename):
-        with datafile(nbt_filename) as file_:
-            eq_(data, parse_nbt(file_))
-
-        out = BytesIO()
-        dump_nbt(data, out, gzipped=False)
-
-        with datafile(nbt_filename, ungzip=True) as file_:
-            eq_(out.getvalue(), file_.read())
+    with datafile(nbt_name, ungzip=True) as file_:
+        eq_(out.getvalue(), file_.read())

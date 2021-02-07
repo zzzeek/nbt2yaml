@@ -1,4 +1,4 @@
-import unittest
+import pytest
 
 from nbt2yaml import compat
 from nbt2yaml import dump_yaml
@@ -8,49 +8,26 @@ from . import eq_
 from . import file_as_string
 
 
-class ToYamlTest(unittest.TestCase):
-    def test_basic(self):
-        with datafile("test.nbt") as file_:
-            data = parse_nbt(file_)
-        eq_(dump_yaml(data), file_as_string("test.yml"))
+@pytest.mark.parametrize(
+    "name",
+    [
+        ("test",),
+        ("list",),
+        ("bigtest",),
+        ("spawner",),
+        ("intarraytest",),
+        ("longarraytest",),
+        ("chunk",),
+        ("empty_compound",),
+    ],
+)
+def test_to_yaml(name):
+    nbt_name = "%s.nbt" % name
+    yml_name = "%s.yml" % name
 
-    def test_lists(self):
-        with datafile("list.nbt") as file_:
-            data = parse_nbt(file_)
-        eq_(dump_yaml(data), file_as_string("list.yml"))
+    if not compat.py3k and yml_name == "bigtest.yml":
+        yml_name = "bigtest.py2k.yml"
 
-    def test_spawner(self):
-        with datafile("spawner.nbt") as file_:
-            data = parse_nbt(file_)
-        eq_(dump_yaml(data), file_as_string("spawner.yml"))
-
-    def test_int_array(self):
-        with datafile("intarraytest.nbt") as file_:
-            data = parse_nbt(file_)
-        eq_(dump_yaml(data), file_as_string("intarraytest.yml"))
-
-    def test_long_array(self):
-        with datafile("longarraytest.nbt") as file_:
-            data = parse_nbt(file_)
-        eq_(dump_yaml(data), file_as_string("longarraytest.yml"))
-
-    def test_large(self):
-        with datafile("bigtest.nbt") as file_:
-            data = parse_nbt(file_)
-
-        if not compat.py3k:
-            filename = "bigtest.py2k.yml"
-        else:
-            filename = "bigtest.yml"
-
-        eq_(dump_yaml(data), file_as_string(filename))
-
-    def test_chunk(self):
-        with datafile("chunk.nbt") as file_:
-            data = parse_nbt(file_)
-        eq_(dump_yaml(data), file_as_string("chunk.yml"))
-
-    def test_empty_compound(self):
-        with datafile("empty_compound.nbt") as file_:
-            data = parse_nbt(file_)
-        eq_(dump_yaml(data), file_as_string("empty_compound.yml"))
+    with datafile(nbt_name) as file_:
+        data = parse_nbt(file_)
+    eq_(dump_yaml(data), file_as_string(yml_name))
