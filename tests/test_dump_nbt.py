@@ -1,16 +1,20 @@
 import unittest
 from nbt2yaml import parse_nbt, dump_nbt
-from tests import datafile, eq_
+from . import datafile, eq_
 import gzip
-import StringIO
+from nbt2yaml.compat import BytesIO
 
 class DumpNBTTest(unittest.TestCase):
     def _assert_data(self, fname):
-        unzipped_data = gzip.GzipFile(fileobj=datafile(fname)).read()
-        parsed = parse_nbt(datafile(fname))
-        out = StringIO.StringIO()
+        with datafile(fname) as df:
+            unzipped_data = gzip.GzipFile(fileobj=df).read()
+
+        with datafile(fname) as df:
+            parsed = parse_nbt(df)
+
+        out = BytesIO()
         dump_nbt(parsed, out)
-        out = gzip.GzipFile(fileobj=StringIO.StringIO(out.getvalue())).read()
+        out = gzip.GzipFile(fileobj=BytesIO(out.getvalue())).read()
         eq_(unzipped_data, out)
 
     def test_basic(self):

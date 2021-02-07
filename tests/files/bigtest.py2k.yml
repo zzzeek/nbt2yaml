@@ -1,7 +1,7 @@
 Level:
 - longTest: !long "9223372036854775807"
 - shortTest: !short "32767"
-- stringTest: "HELLO WORLD THIS IS A TEST STRING \xC5\xC4\xD6!"
+- stringTest: !!python/str "HELLO WORLD THIS IS A TEST STRING \xC5\xC4\xD6!"
 - floatTest: 0.4982314705848694
 - intTest: 2147483647
 - nested compound test:

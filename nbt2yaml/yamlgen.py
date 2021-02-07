@@ -1,5 +1,9 @@
+from __future__ import absolute_import
+
 import yaml
 from nbt2yaml import parse
+import sys
+from . import compat
 
 _explicit_types = parse.TAG_Short, parse.TAG_Long, parse.TAG_Double, parse.TAG_Byte, parse.TAG_Byte_Array
 _all_types = parse.Tag._tags.values()
@@ -11,7 +15,7 @@ _canned_types = {
 }
 
 _types_to_python = {
-    parse.TAG_Long:long,
+    parse.TAG_Long:compat.long_,
     parse.TAG_Int:int,
     parse.TAG_Short:int,
     parse.TAG_Byte:int,
@@ -21,11 +25,11 @@ _types_to_python = {
 
 class ForceType(object):
     """Represent a data value with an explicit type.
-    
+
     This is used to output 'short', 'long', 'double', 'byte'
     explicitly, so that we can differentiate on the
     yaml parsing side what specific NBT form to use.
-    
+
     """
     def __init__(self, type_, value):
         self.type = type_
@@ -37,19 +41,35 @@ class ForceListOfType(ForceType):
 class ForceIntArray(ForceType):
     pass
 
-def _hex_dump(binary):
-    hexa = []
-    for i in binary:
-        hexa.append("{0:02X}".format(ord(i)))
-    return ' '.join(hexa)
+if compat.py3k:
+    def _hex_dump(binary):
+        hexa = []
+        for i in binary:
+            hexa.append("{0:02X}".format(i))
+        return ' '.join(hexa)
 
-def _hex_undump(hexa):
-    binary = ""
-    hexa = hexa.split(' ') # I did not want to import the re module
-    for i in hexa:
-        current = int(i, 16)
-        binary += chr(current)
-    return binary
+
+    def _hex_undump(hexa):
+        binary = bytearray()
+        hexa = hexa.split(' ')
+        for i in hexa:
+            binary.append(int(i, 16))
+        return bytes(binary)
+else:
+    def _hex_dump(binary):
+        hexa = []
+        for i in binary:
+            hexa.append("{0:02X}".format(ord(i)))
+        return ' '.join(hexa)
+
+
+    def _hex_undump(hexa):
+        binary = ""
+        hexa = hexa.split(' ')
+        for i in hexa:
+            current = int(i, 16)
+            binary += chr(current)
+        return binary
 
 def _type_representer(dumper, struct):
     if struct.type is parse.TAG_Byte_Array:
@@ -100,19 +120,20 @@ yaml.add_constructor(u'!byte_array', _byte_array_constructor)
 
 def _yaml_serialize(struct):
     tag, name, data = struct.type, struct.name, struct.data
-    name = name.encode('utf-8')
-    return {name:_value_as_yaml(tag, data)}
+    name = compat.utf8str(name)
+    value = _value_as_yaml(tag, data)
+    return {name:value}
 
 def _yaml_deserialize(struct):
-    name, data = struct.items()[0]
+    name, data = list(struct.items())[0]
     type_ = _type_from_yaml(data)
-    return parse.Tag._tuple(type_, name.decode('utf-8'), _yaml_as_value(type_, data))
+    return parse.Tag._tuple(type_, compat.utf8unicode(name), _yaml_as_value(type_, data))
 
 def _value_as_yaml(type_, value):
     if type_ is parse.TAG_Compound:
         return [_yaml_serialize(s) for s in value]
     elif type_ is parse.TAG_String:
-        return value.encode('utf-8')
+        return compat.utf8str(value)
     elif type_ in _explicit_types:
         return ForceType(type_, value)
     elif type_ is parse.TAG_List:
@@ -127,7 +148,7 @@ def _yaml_as_value(type_, value):
     if type_ is parse.TAG_Compound:
         return [_yaml_deserialize(s) for s in value]
     elif type_ is parse.TAG_String:
-        return value.decode('utf-8')
+        return compat.utf8unicode(value)
     elif type_ in _explicit_types:
         if type_ in _types_to_python:
             return _types_to_python[type_](value.value)
@@ -160,12 +181,12 @@ def dump_yaml(struct, canonical=False, default_flow_style=False):
     """Dump a yaml string given an nbt structure parsed by nbt2yaml."""
 
     return yaml.dump(
-                _yaml_serialize(struct), 
-                default_flow_style=default_flow_style, 
+                _yaml_serialize(struct),
+                default_flow_style=default_flow_style,
                 canonical=canonical)
 
 
 def parse_yaml(stream):
     """Parse a yaml stream into an nbt structure readable by nbt2yaml."""
 
-    return _yaml_deserialize(yaml.load(stream))
+    return _yaml_deserialize(yaml.load(stream,  Loader=yaml.FullLoader))

@@ -1,28 +1,40 @@
 import unittest
-from nbt2yaml import parse_nbt, dump_yaml
-from tests import datafile, eq_
+from nbt2yaml import parse_nbt, dump_yaml, compat
+from . import datafile, eq_, file_as_string
 
 class ToYamlTest(unittest.TestCase):
     def test_basic(self):
-        data = parse_nbt(datafile("test.nbt"))
-        eq_(dump_yaml(data), datafile("test.yml").read())
+        with datafile("test.nbt") as file_:
+            data = parse_nbt(file_)
+        eq_(dump_yaml(data), file_as_string("test.yml"))
 
     def test_lists(self):
-        data = parse_nbt(datafile("list.nbt"))
-        eq_(dump_yaml(data), datafile("list.yml").read())
+        with datafile("list.nbt") as file_:
+            data = parse_nbt(file_)
+        eq_(dump_yaml(data), file_as_string("list.yml"))
 
     def test_spawner(self):
-        data = parse_nbt(datafile("spawner.nbt"))
-        eq_(dump_yaml(data), datafile("spawner.yml").read())
+        with datafile("spawner.nbt") as file_:
+            data = parse_nbt(file_)
+        eq_(dump_yaml(data), file_as_string("spawner.yml"))
 
     def test_int_array(self):
-        data = parse_nbt(datafile("intarraytest.nbt"))
-        eq_(dump_yaml(data), datafile("intarraytest.yml").read())
+        with datafile("intarraytest.nbt") as file_:
+            data = parse_nbt(file_)
+        eq_(dump_yaml(data), file_as_string("intarraytest.yml"))
 
     def test_large(self):
-        data = parse_nbt(datafile("bigtest.nbt"))
-        eq_(dump_yaml(data), datafile("bigtest.yml").read())
+        with datafile("bigtest.nbt") as file_:
+            data = parse_nbt(file_)
+
+        if not compat.py3k:
+            filename = "bigtest.py2k.yml"
+        else:
+            filename = "bigtest.yml"
+
+        eq_(dump_yaml(data), file_as_string(filename))
 
     def test_chunk(self):
-        data = parse_nbt(datafile("chunk.nbt"))
-        eq_(dump_yaml(data), datafile("chunk.yml").read())
+        with datafile("chunk.nbt") as file_:
+            data = parse_nbt(file_)
+        eq_(dump_yaml(data), file_as_string("chunk.yml"))

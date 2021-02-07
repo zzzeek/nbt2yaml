@@ -1,9 +1,12 @@
+from __future__ import print_function, absolute_import
+
 import argparse
+import editor
 import sys
-from nbt2yaml import parse_nbt, dump_yaml, parse_yaml, dump_nbt
+from . import compat, parse_nbt, dump_yaml, parse_yaml, dump_nbt
 import tempfile
+from .compat import StringIO, BytesIO
 import shutil
-import StringIO
 import os
 
 def nbtedit():
@@ -19,16 +22,12 @@ def nbtedit():
     struct = parse_nbt(
                     open(options.filename, 'rb'),
                     gzipped=not options.no_gzip)
-    try:
-        editor = os.environ['EDITOR']
-    except KeyError:
-        sys.exit("Environment variable EDITOR is not set")
 
-    edit_file = tempfile.NamedTemporaryFile(delete=False, suffix='.yml')
+    edit_file = tempfile.NamedTemporaryFile(delete=False, suffix='.yml', mode="w")
     edit_file.write(dump_yaml(struct))
     edit_file.close()
     edit_filename = edit_file.name
-    os.system("%s %s" % (editor, edit_filename))
+    editor.edit(edit_filename)
 
 
     edit_file = open(edit_filename, 'rb')
@@ -66,12 +65,15 @@ def nbt2yaml():
                         )
     options = parser.parse_args()
     if options.filename == '-':
-        input_ = StringIO.StringIO(sys.stdin.read())
+        input_ = StringIO(sys.stdin.read())
     else:
         input_ = open(options.filename, 'rb')
 
-    struct = parse_nbt(input_, gzipped=not options.no_gzip)
-    print dump_yaml(struct)
+    try:
+        struct = parse_nbt(input_, gzipped=not options.no_gzip)
+        print(dump_yaml(struct))
+    finally:
+        input_.close()
 
 def yaml2nbt():
     parser = argparse.ArgumentParser(description="Dump a yaml file or stream to nbt.")
@@ -82,9 +84,17 @@ def yaml2nbt():
                         )
     options = parser.parse_args()
     if options.filename == '-':
-        input_ = StringIO.StringIO(sys.stdin.read())
+        input_ = StringIO(sys.stdin.read())
     else:
         input_ = open(options.filename, 'rb')
 
-    struct = parse_yaml(input_)
-    dump_nbt(struct, sys.stdout, gzipped=not options.no_gzip)
+    try:
+        struct = parse_yaml(input_)
+
+        if compat.py3k:
+            out = sys.stdout.buffer
+        else:
+            out = sys.stdout
+        dump_nbt(struct, out, gzipped=not options.no_gzip)
+    finally:
+        input_.close()

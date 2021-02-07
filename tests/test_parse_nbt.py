@@ -1,6 +1,6 @@
 import unittest
-from nbt2yaml import parse_nbt, parse
-from tests import datafile, eq_
+from nbt2yaml import parse_nbt, parse, compat
+from . import datafile, eq_
 import struct
 
 class ParseNBTTest(unittest.TestCase):
@@ -10,7 +10,8 @@ class ParseNBTTest(unittest.TestCase):
                     u'hello world',
                     [(parse.TAG_String, u'name', u'Bananrama')]
                 )
-        eq_(parse_nbt(datafile("test.nbt")), assert_)
+        with datafile("test.nbt") as file_:
+            eq_(parse_nbt(file_), assert_)
 
     def test_lists(self):
         assert_ = (
@@ -33,7 +34,7 @@ class ParseNBTTest(unittest.TestCase):
     def test_large(self):
         assert_ = (
                     parse.TAG_Compound, u'Level', [
-                        (parse.TAG_Long, u'longTest', 9223372036854775807L),
+                        (parse.TAG_Long, u'longTest', 9223372036854775807),
                         (parse.TAG_Short, u'shortTest', 32767),
                         (parse.TAG_String, u'stringTest', u'HELLO WORLD THIS IS A TEST STRING \xc5\xc4\xd6!'),
                         (parse.TAG_Float, u'floatTest', 0.4982314705848694),
@@ -56,11 +57,11 @@ class ParseNBTTest(unittest.TestCase):
                         (parse.TAG_Compound, [
                             [
                                 (parse.TAG_String, u'name', u'Compound tag #0'),
-                                (parse.TAG_Long, u'created-on', 1264099775885L)
+                                (parse.TAG_Long, u'created-on', 1264099775885)
                             ],
                             [
                                 (parse.TAG_String, u'name', u'Compound tag #1'),
-                                (parse.TAG_Long, u'created-on', 1264099775885L)
+                                (parse.TAG_Long, u'created-on', 1264099775885)
                             ]
                         ])),
                         (parse.TAG_Byte, u'byteTest', 127),
@@ -68,11 +69,13 @@ class ParseNBTTest(unittest.TestCase):
                             u'byteArrayTest (the first 1000 values of '
                                     '(n*n*255+n*7)%100, starting with n=0 '
                                     '(0, 62, 34, 16, 8, ...))',
-                                    ''.join([struct.pack('>b', (n*n*255+n*7)%100) for n in xrange(0, 1000)])
+                                    b''.join([struct.pack('>b', (n*n*255+n*7)%100) for n in compat.range(0, 1000)])
                             ),
                         (parse.TAG_Double, u'doubleTest', 0.4931287132182315)
                     ])
-        eq_(parse_nbt(datafile("bigtest.nbt")), assert_)
+
+        with datafile("bigtest.nbt") as file_:
+            eq_(parse_nbt(file_), assert_)
 
     def test_schematic(self):
         assert_ = (
@@ -95,7 +98,7 @@ class ParseNBTTest(unittest.TestCase):
                             ])),
                 (parse.TAG_Byte_Array, u'Data', '\x00')
                 ])
-        
+
     def test_int_array(self):
         assert_ = (
                     parse.TAG_Compound, 'Test root compound',
@@ -103,4 +106,5 @@ class ParseNBTTest(unittest.TestCase):
                             'Test integer array',
                             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                             12, 13, 14, 15, 16])])
-        eq_(parse_nbt(datafile("intarraytest.nbt")), assert_)
+        with datafile("intarraytest.nbt") as file_:
+            eq_(parse_nbt(file_), assert_)
