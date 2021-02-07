@@ -50,6 +50,11 @@ class FromYamlTest(unittest.TestCase):
             data = parse_yaml(file_)
         self._assert(data, "chunk.nbt")
 
+    def test_empty_compound(self):
+        with datafile("empty_compound.yml") as file_:
+            data = parse_yaml(file_)
+        self._assert(data, "empty_compound.nbt")
+
     def _assert(self, data, nbt_filename):
         with datafile(nbt_filename) as file_:
             eq_(data, parse_nbt(file_))

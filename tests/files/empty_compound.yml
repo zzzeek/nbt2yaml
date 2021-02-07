@@ -1,0 +1,22 @@
+? ''
+: - Data:
+    - WanderingTraderSpawnChance: 25
+    - BorderCenterZ: !double "0.0"
+    - Difficulty: !byte "2"
+    - BorderSizeLerpTime: !long "0"
+    - WanderingTraderSpawnDelay: 24000
+    - CustomBossEvents: []
+    - Player:
+      - Brain:
+        - memories: []
+      - HurtByTimestamp: 0
+      - SleepTimer: !short "0"
+      - Attributes: !list_compound
+        - - Base: !double "0.10000000149011612"
+          - Name: minecraft:generic.movement_speed
+      - Invulnerable: !byte "0"
+    - DataVersion: 2586
+    - DataPacks:
+      - Enabled: !list_string
+        - vanilla
+      - Disabled: !list_end []

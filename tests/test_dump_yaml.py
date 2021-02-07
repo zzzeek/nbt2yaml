@@ -49,3 +49,8 @@ class ToYamlTest(unittest.TestCase):
         with datafile("chunk.nbt") as file_:
             data = parse_nbt(file_)
         eq_(dump_yaml(data), file_as_string("chunk.yml"))
+
+    def test_empty_compound(self):
+        with datafile("empty_compound.nbt") as file_:
+            data = parse_nbt(file_)
+        eq_(dump_yaml(data), file_as_string("empty_compound.yml"))

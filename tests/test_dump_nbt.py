@@ -41,3 +41,6 @@ class DumpNBTTest(unittest.TestCase):
 
     def test_chunk(self):
         self._assert_data("chunk.nbt")
+
+    def test_empty_compound(self):
+        self._assert_data("empty_compound.nbt")

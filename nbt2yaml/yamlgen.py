@@ -226,7 +226,6 @@ def _type_from_yaml(data):
     elif isinstance(data, ForceLongArray):
         return parse.TAG_Long_Array
     elif isinstance(data, list):
-        assert data and isinstance(data[0], dict)
         return parse.TAG_Compound
     elif isinstance(data, ForceType):
         return data.type
