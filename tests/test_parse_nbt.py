@@ -70,7 +70,9 @@ class ParseNBTTest(unittest.TestCase):
                 (
                     parse.TAG_String,
                     "stringTest",
-                    "HELLO WORLD THIS IS A TEST STRING \xc5\xc4\xd6!",
+                    compat.ue(
+                        "HELLO WORLD THIS IS A TEST STRING \xc5\xc4\xd6!"
+                    ),
                 ),
                 (parse.TAG_Float, "floatTest", 0.4982314705848694),
                 (parse.TAG_Int, "intTest", 2147483647),

@@ -29,6 +29,11 @@ class ToYamlTest(unittest.TestCase):
             data = parse_nbt(file_)
         eq_(dump_yaml(data), file_as_string("intarraytest.yml"))
 
+    def test_long_array(self):
+        with datafile("longarraytest.nbt") as file_:
+            data = parse_nbt(file_)
+        eq_(dump_yaml(data), file_as_string("longarraytest.yml"))
+
     def test_large(self):
         with datafile("bigtest.nbt") as file_:
             data = parse_nbt(file_)

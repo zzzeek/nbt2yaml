@@ -52,6 +52,10 @@ class ForceIntArray(ForceType):
     pass
 
 
+class ForceLongArray(ForceType):
+    pass
+
+
 if compat.py3k:
 
     def _hex_dump(binary):
@@ -105,9 +109,14 @@ def _int_array_representer(dumper, struct):
     return dumper.represent_sequence("!int_array", struct.value)
 
 
+def _long_array_representer(dumper, struct):
+    return dumper.represent_sequence("!long_array", struct.value)
+
+
 yaml.add_representer(ForceType, _type_representer)
 yaml.add_representer(ForceListOfType, _collection_representer)
 yaml.add_representer(ForceIntArray, _int_array_representer)
+yaml.add_representer(ForceLongArray, _long_array_representer)
 
 
 def _type_constructor(type_):
@@ -136,6 +145,11 @@ def _byte_array_constructor(loader, node):
     return ForceType(parse.TAG_Byte_Array, _hex_undump(value))
 
 
+def _long_array_constructor(loader, node):
+    value = loader.construct_sequence(node)
+    return ForceLongArray(parse.TAG_Long_Array, value)
+
+
 for type_ in _explicit_types:
     if type_ is not parse.TAG_Byte_Array:
         yaml.add_constructor("!%s" % type_.name, _type_constructor(type_))
@@ -145,6 +159,7 @@ for type_ in _all_types:
 
 yaml.add_constructor("!int_array", _int_array_constructor)
 yaml.add_constructor("!byte_array", _byte_array_constructor)
+yaml.add_constructor("!long_array", _long_array_constructor)
 
 
 def _yaml_serialize(struct):
@@ -176,6 +191,8 @@ def _value_as_yaml(type_, value):
         )
     elif type_ is parse.TAG_Int_Array:
         return ForceIntArray(parse.TAG_Int, value)
+    elif type_ is parse.TAG_Long_Array:
+        return ForceLongArray(parse.TAG_Long, value)
     else:
         return value
 
@@ -195,6 +212,8 @@ def _yaml_as_value(type_, value):
         return (ltype, [_yaml_as_value(ltype, s) for s in value.value])
     elif type_ is parse.TAG_Int_Array:
         return value.value
+    elif type_ is parse.TAG_Long_Array:
+        return value.value
     else:
         return value
 
@@ -204,6 +223,8 @@ def _type_from_yaml(data):
         return parse.TAG_List
     elif isinstance(data, ForceIntArray):
         return parse.TAG_Int_Array
+    elif isinstance(data, ForceLongArray):
+        return parse.TAG_Long_Array
     elif isinstance(data, list):
         assert data and isinstance(data[0], dict)
         return parse.TAG_Compound

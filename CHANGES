@@ -4,6 +4,9 @@ Happy new decade!  Someone said they were using this.    So I
 resurrected it from a deleted hg repository, got it going on
 Python 3 2020's style.
 
+Also implemented the Long_Array datatype, patch courtesy
+Mark Taylor.
+
 
 0.3.0
 =====

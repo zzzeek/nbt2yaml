@@ -139,6 +139,19 @@ class IntArrayTag(Tag):
             TAG_Int._dump_impl(elem, stream)
 
 
+class LongArrayTag(Tag):
+    def _parse_impl(self, stream):
+        element_type = TAG_Long
+        length = self._parse_length(TAG_Long, stream)
+
+        return [element_type._parse_impl(stream) for i in compat.range(length)]
+
+    def _dump_impl(self, data, stream):
+        self._dump_length(TAG_Long, len(data), stream)
+        for elem in data:
+            TAG_Long._dump_impl(elem, stream)
+
+
 TAG_End = EndTag("end", 0)
 TAG_Byte = FixedTag("byte", 1, 1, "b")
 TAG_Short = FixedTag("short", 2, 2, "h")
@@ -151,6 +164,7 @@ TAG_String = VariableTag("string", 8, TAG_Short, encoding="utf-8")
 TAG_List = ListTag("list", 9)
 TAG_Compound = CompoundTag("compound", 10)
 TAG_Int_Array = IntArrayTag("int_array", 11)
+TAG_Long_Array = LongArrayTag("long_array", 12)
 
 
 def parse_nbt(stream, gzipped=True):

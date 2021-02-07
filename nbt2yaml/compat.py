@@ -18,6 +18,12 @@ else:
 
 if py3k:
 
+    def u(s):
+        return s
+
+    def ue(s):
+        return s
+
     def utf8unicode(s):
         assert isinstance(s, str)
         return s
@@ -28,6 +34,12 @@ if py3k:
 
 
 else:
+
+    def u(s):
+        return unicode(s, "utf-8")  # noqa
+
+    def ue(s):
+        return unicode(s, "unicode_escape")  # noqa
 
     def utf8unicode(s):
         return s.decode("utf-8")

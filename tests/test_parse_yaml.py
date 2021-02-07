@@ -40,6 +40,11 @@ class FromYamlTest(unittest.TestCase):
             data = parse_yaml(file_)
         self._assert(data, "intarraytest.nbt")
 
+    def test_long_array(self):
+        with datafile("longarraytest.yml") as file_:
+            data = parse_yaml(file_)
+        self._assert(data, "longarraytest.nbt")
+
     def test_chunk(self):
         with datafile("chunk.yml") as file_:
             data = parse_yaml(file_)
