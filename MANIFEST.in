@@ -4,6 +4,7 @@
 recursive-include doc *.html *.css *.txt *.js *.jpg *.png *.py Makefile *.rst *.mako *.sty
 recursive-include examples *.py
 recursive-include tests *.py *.dat
+recursive-include tests/files *
 
 include README* LICENSE distribute_setup.py ez_setup.py CHANGES*
 prune doc/build/output
